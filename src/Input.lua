@@ -105,19 +105,13 @@ function Input.Press(pitch, velocity)
         VIM:SendKeyEvent(true, VK_LSHIFT, false,game)
         VIM:SendKeyEvent(true ,CharacterToWord(keyToPress), false, game)
         VIM:SendKeyEvent(false, VK_LSHIFT, false, game)
-        inputMaid[pitch - 1] = nil
     else
         if (over64) then
             VIM:SendKeyEvent(true, VK_LCONTROL, false, game)
             VIM:SendKeyEvent(true, CharacterToWord(key), false, game)
             VIM:SendKeyEvent(false, VK_LCONTROL, false, game)
         else
-            if CheckValue(BLOCKED, pitch) then
-                VIM:SendKeyEvent(true, CharacterToWord(key),false,game)
-            else
-                VIM:SendKeyEvent(true, CharacterToWord(key),false,game)
-                inputMaid[pitch + 1] = nil
-            end
+            VIM:SendKeyEvent(true, CharacterToWord(key),false,game)
         end
     end
 end
@@ -130,8 +124,16 @@ function Input.Release(pitch)
     if (upperMapIdx) then
         local keyToPress = LOWER_MAP:sub(upperMapIdx, upperMapIdx)
         VIM:SendKeyEvent(false, CharacterToWord(keyToPress), false, game)
+        inputMaid[pitch - 1] = nil
     else
         if (not over64) then 
+            if CheckValue(BLOCKED, pitch) then
+                VIM:SendKeyEvent(false, CharacterToWord(key), false, game)
+            else
+                VIM:SendKeyEvent(false, CharacterToWord(key), false, game)
+                inputMaid[pitch + 1] = nil
+            end
+        else
             VIM:SendKeyEvent(false, CharacterToWord(key), false, game)
         end
     end
@@ -146,7 +148,7 @@ function Input.Hold(pitch, duration, velocity)
     end
     Input.Release(pitch)
     Input.Press(pitch, velocity)
-    inputMaid[pitch] = Thread.Delay(duration, Input.Release, pitch)
+    inputMaid[pitch] = task.delay(duration, Input.Release, pitch)
 end
 
 
