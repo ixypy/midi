@@ -143,9 +143,7 @@ end
 function Input.Hold(pitch, duration, velocity)
     if (getgenv().leftNotePitches[pitch] and not getgenv().LeftHand) then return end
     if (getgenv().rightNotePitches[pitch] and not getgenv().RightHand) then return end
-    if inputMaid[pitch] then
-        inputMaid[pitch] = nil
-    end
+    inputMaid[pitch] = nil
     Input.Release(pitch)
     Input.Press(pitch, velocity)
     inputMaid[pitch] = Thread.Delay(duration, Input.Release, pitch)
